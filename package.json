@@ -11,11 +11,19 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.11.0",
+    "@react-native-community/geolocation": "^2.0.2",
+    "bluebird": "^3.7.2",
+    "lodash": "^4.17.15",
+    "moment": "^2.27.0",
     "react": "16.11.0",
     "react-native": "0.62.2",
+    "react-native-android-sms-listener": "^0.7.0",
+    "react-native-config": "^1.2.1",
     "react-native-elements": "^2.0.2",
     "react-native-navigation": "^6.7.5",
-    "react-native-vector-icons": "^6.6.0"
+    "react-native-render-html": "^4.2.0",
+    "react-native-vector-icons": "^6.6.0",
+    "react-native-webview": "^10.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

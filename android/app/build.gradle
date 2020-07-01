@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
@@ -150,6 +151,12 @@ android {
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        release {
+          storeFile file('your_key_name.keystore')
+          storePassword project.env.get("KEY_STORE_PASSWORD")
+          keyAlias project.env.get("KEY_STORE_PASSWORD")
+          keyPassword project.env.get("KEY_STORE_PASSWORD")
         }
     }
     buildTypes {

@@ -1,85 +1,110 @@
-import React, { Component } from 'react';
-import { Text, ScrollView, StyleSheet, Alert } from 'react-native';
-import { List, ListItem } from 'react-native-elements';
-import { testProps } from '../lib/utils';
+import React, {useState, useCallback, useEffect} from 'react';
+import {FlatList} from 'react-native';
+import {ListItem} from 'react-native-elements';
+import {get} from '../lib/api';
+import {Navigation} from 'react-native-navigation';
 
-const CLOUD_TYPES = {
-  'Altocumulus': 'mid-level stratocumuliform limited-convective',
-  'Altostratus': 'mid-level stratiform non-convective',
-  'AWS': 'the safest and protected platform of cloud service which offers a wide set of infrastructure services like database storage, computing power, networking',
-  'Azure': 'used for deploying, designing and managing the applications through a worldwide network',
-  'Cirrocumulus': 'high-level stratocumuliform limited-convective',
-  'Cirrostratus': 'high-level stratiform non-convective',
-  'Cirrus': 'high-level cirriform mostly non-convective',
-  'Creative Cloud': 'Adobe offers many products that provide cloud services',
-  'Cumulonimbus': 'towering vertical cumulonimbiform strong-convective',
-  'Cumulus Congestus': 'towering vertical cumuliform free-convective',
-  'Cumulus Mediocris': 'vertical/multi-level cumuliform free-convective',
-  'Cumulus humilis': 'low-level cumuliform free-convective',
-  'Dropbox': 'a refined cloud storage service used by small businesses and customers to store files or documents virtually on remote cloud servers',
-  'Fog': 'surface-level stratiform non-convective',
-  'Google Cloud Platform': 'uses resources such as computers, virtual machines, hard disks, etc. located at Google data centers',
-  'IBM Cloud': 'offers Iaas, PaaS, and SaaS through all the available cloud delivery models',
-  'Kamatera': 'provides very low-maintenance and high-performance cloud infrastructure services',
-  'Nimbostratus': 'vertical/multi-level stratiform non-convective',
-  'Noctilucent': 'extreme-level cirriform mostly non-convective',
-  'Oracle Cloud': 'available as SaaS, PaaS, and IaaS. Oracle Cloud helps the companies in transforming their business quickness and reducing the IT Complexity',
-  'PhoenixNAP': 'a global IT services provider offering secure and scalable Infrastructure-as-a-Service solutions, including private, public, and managed cloud services',
-  'Polar Stratospheric': 'very high-level cirriform mostly non-convective',
-  'Rackspace Cloud': 'offers a set of cloud computing services like hosting web applications, Cloud Files, Cloud Block Storage, Cloud Backup, Databases and Cloud Servers',
-  'RedHat': 'an Open Cloud technology used by IT organizations to deliver agile and flexible solutions',
-  'Salesforce Cloud': 'offers all the applications required by businesses like CRM, ERP, customer service, sales, mobile applications, and marketing',
-  'SAP': 'an enterprise service with wide-ranging services required for application development',
-  'ScienceSoft': 'a renowned US-based provider of cloud infrastructure services',
-  'Stratocumulus': 'low-level stratocumuliform limited-convective',
-  'Stratus': 'low-level stratiform non-convective',
-  'VMWare': 'a universal leader in virtualization and Cloud Infrastructure',
-};
+export default function ListScreen({componentId}) {
+  const [page, setPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
+  const [data, setData] = useState([]);
 
-const styles = StyleSheet.create({
-  listHeader: {
-    padding: 8,
-    fontSize: 14,
-    marginBottom: -20,
-  },
-});
+  const fetchAllArticles = useCallback(
+    async (payload = {}) => {
+      setRefreshing(true);
+      try {
+        const {$refreshing, $page} = payload;
+        if ($refreshing) {
+          const response = await get('/wp-json/wp/v2/posts', {
+            _embed: true,
+            per_page: 20,
+            page: 1,
+          });
+          setData(response);
+          setPage(1);
+        } else {
+          console.log('DEBUG $page', $page);
+          const response = await get('/wp-json/wp/v2/posts', {
+            _embed: true,
+            per_page: 20,
+            page: $page,
+          });
+          setPage(page + 1);
+          setData([...data, ...response]);
+        }
+      } catch (error) {
+        console.log('DEBUG error', error);
+      }
+      setRefreshing(false);
+    },
+    [data, page],
+  );
 
-export default class ListScreen extends Component {
-
-  showPickedAlert (cloudType) {
-    const onLearnMore = () => {
-      Alert.alert(
-        cloudType,
-        `This is a ${CLOUD_TYPES[cloudType]} cloud`
+  useEffect(() => {
+    const fetch = async () => {
+      setRefreshing(true);
+      const response = await get('/wp-json/wp/v2/posts', {
+        _embed: true,
+        per_page: 20,
+        page: 1,
+      });
+      console.log('DEBUG refreshing response', response);
+      console.log(
+        'DEBUG thumbnail',
+        response[0]?._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes?.thumbnail
+          ?.source_url,
       );
+      setData(response);
+      setRefreshing(false);
     };
-    Alert.alert(
-      'Your Cloud Selection',
-      `Congratulations! You expressed interest in the ${cloudType} cloud`,
-      [
-        {text: `Learn more about ${cloudType}`, onPress: onLearnMore},
-        {text: 'Cancel', style: 'cancel'},
-        {text: 'OK'},
-      ],
-      {cancelable: false}
-    );
-  }
+    fetch();
+  }, []);
 
-  render() {
-    return (
-      <ScrollView>
-        <Text style={styles.listHeader}>Check out these clouds</Text>
-        <List>
-          {Object.keys(CLOUD_TYPES).map(cloudType => (
-            <ListItem
-              key={cloudType}
-              title={cloudType}
-              onPress={() => this.showPickedAlert(cloudType)}
-              {...testProps(cloudType)}
-            />
-          ))}
-        </List>
-      </ScrollView>
-    );
-  }
+  const handleRefresh = useCallback(() => {
+    fetchAllArticles({$refreshing: true, $page: 1});
+  }, [fetchAllArticles]);
+
+  const handleLoadMore = useCallback(() => {
+    fetchAllArticles({$page: page + 1});
+  }, [fetchAllArticles, page]);
+
+  const handlePress = item => {
+    Navigation.push(componentId, {
+      component: {
+        name: 'ArticleScreen',
+        passProps: {
+          data: item,
+        },
+      },
+    });
+  };
+
+  return (
+    <FlatList
+      data={data}
+      renderItem={({item}) => (
+        <ListItem
+          roundAvatar
+          title={item.title.rendered}
+          subtitle={item?._embedded?.author?.[0]?.name}
+          leftAvatar={{
+            source: {
+              uri:
+                item?._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes?.thumbnail
+                  ?.source_url,
+            },
+          }}
+          containerStyle={{borderBottomWidth: 0}}
+          titleStyle={{fontWeight: 'bold'}}
+          subtitleStyle={{color: 'gray'}}
+          onPress={() => handlePress(item)}
+        />
+      )}
+      keyExtractor={item => item.id}
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.4}
+    />
+  );
 }

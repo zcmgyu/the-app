@@ -1,25 +1,22 @@
 /* global navigator, window */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import B from 'bluebird';
-import { Platform, View, Text, StyleSheet, PermissionsAndroid } from 'react-native';
+import {Platform, View, Text, StyleSheet, PermissionsAndroid} from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
 
 async function requestLocationPermission() {
-  if (Platform.OS === "android") {
-    await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: "Location Read Verification",
-        message: "We need access to read geolocation data so we can show that data to you"
-      }
-    );
+  if (Platform.OS === 'android') {
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+      title: 'Location Read Verification',
+      message: 'We need access to read geolocation data so we can show that data to you',
+    });
   } else {
-    navigator.geolocation.requestAuthorization();
+    Geolocation.requestAuthorization();
   }
 }
 
 export default class LocationScreen extends Component {
-
   constructor() {
     super();
     this.state = {lat: 0, long: 0, acc: 0};
@@ -38,23 +35,23 @@ export default class LocationScreen extends Component {
     try {
       await requestLocationPermission();
 
-      if (Platform.OS === "android") {
+      if (Platform.OS === 'android') {
         await B.delay(500); // wait a bit for android to know we can get position
       }
 
       const onSuccess = this.onPositionUpdate.bind(this);
-      const onErr = (err) => {
+      const onErr = err => {
         window.alert(err.message);
       };
-      navigator.geolocation.getCurrentPosition(onSuccess, onErr);
-      this.watchId = navigator.geolocation.watchPosition(onSuccess, onErr);
+      Geolocation.getCurrentPosition(onSuccess, onErr);
+      this.watchId = Geolocation.watchPosition(onSuccess, onErr);
     } catch (err) {
       console.warn(err); // eslint-disable-line no-console
     }
   }
 
   componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchId);
+    Geolocation.clearWatch(this.watchId);
   }
 
   render() {
@@ -78,6 +75,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   message: {
-    padding: 20
-  }
+    padding: 20,
+  },
 });

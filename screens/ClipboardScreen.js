@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
-import { Clipboard, View, StyleSheet, Text } from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import React, {Component} from 'react';
+import {Clipboard, View, StyleSheet, Text} from 'react-native';
+import {Input, Button} from 'react-native-elements';
 import baseStyles from '../styles/base';
-import { testProps } from '../lib/utils';
+import {testProps} from '../lib/utils';
 
 export default class ClipboardScreen extends Component {
-
-
   constructor() {
     super();
     this.state = {clipboardText: null, curText: null};
@@ -24,31 +22,33 @@ export default class ClipboardScreen extends Component {
     await Clipboard.setString(this.state.curText);
   }
 
-
   render() {
     const {clipboardText} = this.state;
     return (
       <View style={styles.main}>
         <View style={{...baseStyles.flexCenter}}>
           <Text style={styles.echoHeader}>Here&apos;s the clipboard text:</Text>
-          <Text style={styles.savedEcho} testId="clipboardText" accessibilityLabel={clipboardText}>{clipboardText}</Text>
-          <Button {...testProps('refreshClipboardText')} text="Refresh Clipboard Text"
+          <Text style={styles.savedEcho} testId="clipboardText" accessibilityLabel={clipboardText}>
+            {clipboardText}
+          </Text>
+          <Button
+            {...testProps('refreshClipboardText')}
+            title="Refresh Clipboard Text"
             onPress={this.refresh.bind(this)}
           />
         </View>
-        <View style={styles.form}>
-          <Input
-            placeholder="Enter text"
-            style={styles.formControl}
-            onChangeText={(text) => this.setState({curText: text})}
-            {...testProps('messageInput')}
-          />
-          <Button
-            text="Set Clipboard Text" style={styles.formControl}
-            onPress={this.setText.bind(this)}
-            {...testProps('setClipboardText')}
-          />
-        </View>
+        <Input
+          placeholder="Enter text"
+          style={styles.formControl}
+          onChangeText={text => this.setState({curText: text})}
+          {...testProps('messageInput')}
+        />
+        <Button
+          title="Set Clipboard Text"
+          style={styles.formControl}
+          onPress={this.setText.bind(this)}
+          {...testProps('setClipboardText')}
+        />
       </View>
     );
   }

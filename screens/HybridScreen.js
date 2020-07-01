@@ -1,13 +1,13 @@
 /* global alert */
 
-import React, { Component } from 'react';
-import { View, WebView, StyleSheet } from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {Input, Button} from 'react-native-elements';
+import {WebView} from 'react-native-webview';
 import baseStyles from '../styles/base';
-import { testProps } from '../lib/utils';
+import {testProps} from '../lib/utils';
 
 export default class HybridScreen extends Component {
-
   constructor() {
     super();
     this.state = {
@@ -32,7 +32,7 @@ export default class HybridScreen extends Component {
     let source = {html: this.initialHtml()};
     if (url) {
       if (!/^https:\/\/appiumpro.com$/i.test(url)) {
-        alert("Sorry, you are not allowed to visit that url");
+        alert('Sorry, you are not allowed to visit that url');
       } else {
         source = {uri: url};
       }
@@ -40,27 +40,28 @@ export default class HybridScreen extends Component {
     return (
       <View style={styles.main}>
         <Input
-          ref={(input) => {this.input = input;}}
+          ref={input => {
+            this.input = input;
+          }}
           autoCapitalize="none"
           autoCorrect={false}
           placeholder="https://appiumpro.com"
-          onChangeText={(url) => this.setState({urlInput: url, url: null})}
+          onChangeText={url => this.setState({urlInput: url, url: null})}
           {...testProps('urlInput')}
         />
         <Button
-          text="Go" style={styles.formControl}
+          title="Go"
+          style={styles.formControl}
           onPress={() => this.setState({url: urlInput})}
           {...testProps('navigateBtn')}
         />
         <Button
-          text="Clear" style={styles.formControl}
+          title="Clear"
+          style={styles.formControl}
           onPress={() => this.input.clear()}
           {...testProps('clearBtn')}
         />
-        <WebView
-         style={styles.webview}
-         source={source}
-        />
+        <WebView style={styles.webview} source={source} />
       </View>
     );
   }
@@ -76,12 +77,12 @@ const styles = StyleSheet.create({
   },
   formControl: {
     margin: baseStyles.margin,
-    width: '100%',
-    height: 25,
+    //   width: '100%',
+    //   height: 25,
   },
   webview: {
     height: 200,
     width: 400,
     marginTop: 25,
-  }
+  },
 });
