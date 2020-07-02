@@ -13,6 +13,7 @@ import PhotoScreen from './PhotoScreen';
 import LocationScreen from './LocationScreen';
 import PickerScreen from './PickerScreen';
 import ArticleScreen from './ArticleScreen';
+import SearchScreen from './SearchScreen';
 
 // register all screens of the app (including internal ones)
 export function registerScreens() {
@@ -29,4 +30,5 @@ export function registerScreens() {
   Navigation.registerComponent('LocationScreen', () => LocationScreen);
   Navigation.registerComponent('PickerScreen', () => PickerScreen);
   Navigation.registerComponent('ArticleScreen', () => ArticleScreen);
+  Navigation.registerComponent('SearchScreen', () => SearchScreen);
 }

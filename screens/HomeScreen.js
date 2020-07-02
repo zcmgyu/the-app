@@ -36,6 +36,11 @@ let viewList = [
     screen: 'List',
   },
   {
+    name: 'Search Demo',
+    desc: 'Test Submit button on keyboard',
+    screen: 'Search',
+  },
+  {
     name: 'Photo Demo',
     desc: 'Some photos with no distinguishing IDs',
     screen: 'Photo',
