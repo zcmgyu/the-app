@@ -298,7 +298,7 @@ PODS:
     - React-cxxreact (= 0.62.2)
     - React-jsi (= 0.62.2)
     - ReactCommon/callinvoker (= 0.62.2)
-  - ReactNativeNavigation (6.8.0):
+  - ReactNativeNavigation (6.9.0):
     - React
     - React-RCTImage
     - React-RCTText
@@ -483,7 +483,7 @@ SPEC CHECKSUMS:
   React-RCTText: fae545b10cfdb3d247c36c56f61a94cfd6dba41d
   React-RCTVibration: 4356114dbcba4ce66991096e51a66e61eda51256
   ReactCommon: ed4e11d27609d571e7eee8b65548efc191116eb3
-  ReactNativeNavigation: 2d10f0059506c69795683f525369baa7d0e9536c
+  ReactNativeNavigation: 38441fc9711ea6df07e4c30c642fb4c29fecc4c5
   RNCAsyncStorage: d059c3ee71738c39834a627476322a5a8cd5bf36
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
